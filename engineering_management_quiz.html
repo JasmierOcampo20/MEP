@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Management 60-Item Quiz (Modules 4, 5 & 6)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg text-white leading-tight">Engineering Management Quiz</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Modules 4, 5 & 6 • Exact Verbatim Source Questions</p>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Mode Selector -->
+                <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex text-xs font-medium">
+                    <button id="modePracticeBtn" onclick="setMode('practice')" class="px-2.5 py-1.5 rounded-md text-white bg-sky-600 shadow transition-all">
+                        <i class="fa-solid fa-lightbulb mr-1"></i> Practice
+                    </button>
+                    <button id="modeExamBtn" onclick="setMode('exam')" class="px-2.5 py-1.5 rounded-md text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-clipboard-check mr-1"></i> Exam
+                    </button>
+                </div>
+
+                <!-- Timer Widget -->
+                <div class="hidden md:flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-mono">
+                    <i class="fa-regular fa-clock text-sky-400"></i>
+                    <span id="timerDisplay" class="text-slate-200">00:00</span>
+                    <button onclick="toggleTimer()" id="timerToggleBtn" class="text-slate-400 hover:text-white ml-1">
+                        <i class="fa-solid fa-pause"></i>
+                    </button>
+                </div>
+
+                <!-- View Answer Key Quick Button -->
+                <button onclick="toggleAnswerKeyModal()" class="hidden sm:flex items-center text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg transition-colors">
+                    <i class="fa-solid fa-key text-amber-400 mr-1.5"></i> Answer Key
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- LEFT SIDEBAR: Stats, Filters & Question Grid Navigation -->
+        <aside class="lg:col-span-1 space-y-6">
+            
+            <!-- Quick Overview Card -->
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-semibold text-slate-200 text-sm">Progress Tracker</h2>
+                    <span id="answeredCount" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">0 / 60</span>
+                </div>
+
+                <!-- Live Progress Bar -->
+                <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden mb-4">
+                    <div id="progressBar" class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Submission Status Box -->
+                <div id="scorePreviewBox" class="hidden bg-slate-900/90 border border-slate-700 p-3 rounded-xl mb-4 text-center">
+                    <p class="text-xs text-slate-400 font-medium">Final Result Score</p>
+                    <p class="text-2xl font-black text-emerald-400 font-mono my-0.5"><span id="finalScoreVal">0</span> <span class="text-sm font-normal text-slate-400">/ 60</span></p>
+                    <p id="scorePercentage" class="text-xs font-semibold text-sky-400">(0%)</p>
+                </div>
+
+                <!-- Primary Action Buttons -->
+                <div class="space-y-2">
+                    <button id="submitQuizBtn" onclick="submitQuiz()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Submit & Grade Quiz</span>
+                    </button>
+                    <button onclick="resetQuizConfirm()" class="w-full py-2 px-4 bg-slate-700/60 hover:bg-slate-700 text-slate-300 font-medium rounded-xl text-xs transition-colors flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-rotate-right mr-1"></i>
+                        <span>Reset Answers</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters & Category Navigation -->
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-sm space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Module Filter</label>
+                    <div class="flex flex-wrap gap-1.5" id="moduleFilterContainer">
+                        <button onclick="filterModule('all')" class="mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-sky-600 text-white shadow" data-mod="all">All (60)</button>
+                        <button onclick="filterModule('Module 4')" class="mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-slate-600" data-mod="Module 4">Mod 4 (20)</button>
+                        <button onclick="filterModule('Module 5')" class="mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-slate-600" data-mod="Module 5">Mod 5 (14)</button>
+                        <button onclick="filterModule('Module 6')" class="mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-slate-600" data-mod="Module 6">Mod 6 (26)</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Question Type</label>
+                    <div class="grid grid-cols-2 gap-1.5" id="typeFilterContainer">
+                        <button onclick="filterType('all')" class="type-filter-btn py-1 px-2 rounded-lg text-xs text-center font-medium bg-sky-600 text-white shadow" data-type="all">All Types</button>
+                        <button onclick="filterType('mcq')" class="type-filter-btn py-1 px-2 rounded-lg text-xs text-center font-medium bg-slate-700 text-slate-300 hover:bg-slate-600" data-type="mcq">MCQ (1-50)</button>
+                        <button onclick="filterType('identification')" class="type-filter-btn py-1 px-2 rounded-lg text-xs text-center font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 col-span-2" data-type="identification">Identification (51-60)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Jump Grid Navigator -->
+            <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-slate-200 text-sm">Question Navigator</h3>
+                    <div class="flex items-center space-x-2 text-[10px] text-slate-400">
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-slate-600 mr-1"></span> Unset</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-sky-500 mr-1"></span> Done</span>
+                    </div>
+                </div>
+
+                <!-- 60 Items Grid -->
+                <div id="questionGrid" class="grid grid-cols-6 gap-1.5 max-h-64 overflow-y-auto pr-1">
+                    <!-- Dynamic Grid Buttons generated by JS -->
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- RIGHT CONTENT AREA: Question Cards & Results Summary -->
+        <main class="lg:col-span-3 space-y-6">
+
+            <!-- Mode & Scope Info Notice Banner -->
+            <div id="infoBanner" class="bg-slate-800/60 border border-sky-500/20 rounded-2xl p-4 flex items-start space-x-3">
+                <div class="text-sky-400 text-lg mt-0.5"><i class="fa-solid fa-circle-info"></i></div>
+                <div class="text-xs text-slate-300 space-y-1">
+                    <p class="font-semibold text-slate-200" id="modeBannerTitle">Practice Mode Active</p>
+                    <p id="modeBannerDesc" class="text-slate-400">Select options or enter identification answers. Correctness feedback and exact source module citations are displayed immediately for effective study.</p>
+                </div>
+            </div>
+
+            <!-- Detailed Results Breakdown Section (Hidden until submitted) -->
+            <div id="resultsDashboard" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-700 pb-5">
+                    <div>
+                        <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest">Assessment Complete</span>
+                        <h2 class="text-2xl font-bold text-white">Quiz Summary & Score Breakdown</h2>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleAnswerKeyModal()" class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-semibold rounded-xl text-xs transition-colors">
+                            <i class="fa-solid fa-key mr-1.5"></i> Full Answer Key
+                        </button>
+                        <button onclick="resetQuizConfirm()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-xl text-xs transition-colors">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Retake Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Key Stat Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700/60 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Overall Score</p>
+                        <p id="statOverall" class="text-2xl font-extrabold text-white mt-1">0 / 60</p>
+                        <span id="statOverallPct" class="text-[11px] font-semibold text-sky-400">0%</span>
+                    </div>
+
+                    <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700/60 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Part I: MCQ</p>
+                        <p id="statMcq" class="text-2xl font-extrabold text-sky-400 mt-1">0 / 50</p>
+                        <span id="statMcqPct" class="text-[11px] font-semibold text-slate-400">0%</span>
+                    </div>
+
+                    <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700/60 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Part II: Identification</p>
+                        <p id="statIdent" class="text-2xl font-extrabold text-purple-400 mt-1">0 / 10</p>
+                        <span id="statIdentPct" class="text-[11px] font-semibold text-slate-400">0%</span>
+                    </div>
+
+                    <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700/60 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Time Elapsed</p>
+                        <p id="statTime" class="text-2xl font-extrabold text-amber-400 mt-1 font-mono">00:00</p>
+                        <span class="text-[11px] text-slate-400">Completed</span>
+                    </div>
+                </div>
+
+                <!-- Per-Module Accuracy Breakdown -->
+                <div class="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-700/50">
+                    <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Module Performance Breakdown</h4>
+                    
+                    <!-- Module 4 -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-indigo-300 font-medium">Module 4: Organizing & Staffing</span>
+                            <span id="mod4ScoreText" class="text-slate-300 font-mono">0 / 20 (0%)</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div id="mod4Bar" class="bg-indigo-500 h-full w-0 transition-all"></div>
+                        </div>
+                    </div>
+
+                    <!-- Module 5 -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-purple-300 font-medium">Module 5: Communication & Leadership</span>
+                            <span id="mod5ScoreText" class="text-slate-300 font-mono">0 / 14 (0%)</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div id="mod5Bar" class="bg-purple-500 h-full w-0 transition-all"></div>
+                        </div>
+                    </div>
+
+                    <!-- Module 6 -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-emerald-300 font-medium">Module 6: Controlling & Operations</span>
+                            <span id="mod6ScoreText" class="text-slate-300 font-mono">0 / 26 (0%)</span>
+                        </div>
+                        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div id="mod6Bar" class="bg-emerald-500 h-full w-0 transition-all"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="questionsList" class="space-y-6">
+                <!-- Dynamic Question Cards generated by JS -->
+            </div>
+
+            <!-- Bottom Floating Submit Bar -->
+            <div class="sticky bottom-4 z-30 bg-slate-800/90 backdrop-blur-md border border-slate-700/80 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs text-slate-400 font-medium hidden sm:inline">Answered: <strong id="bottomAnsweredVal" class="text-white">0</strong> of 60</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="scrollToTop()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-xs font-medium transition-colors">
+                        <i class="fa-solid fa-arrow-up mr-1"></i> Top
+                    </button>
+                    <button onclick="submitQuiz()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-lg transition-all">
+                        <i class="fa-solid fa-check-double mr-1.5"></i> Finish & Grade
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- COMPLETE ANSWER KEY MODAL -->
+    <div id="answerKeyModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-4xl max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-700 flex items-center justify-between bg-slate-800/90">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Complete Answer Key & Module Index</h3>
+                        <p class="text-xs text-slate-400">Verbatim answers from source materials (60 Items)</p>
+                    </div>
+                </div>
+                <button onclick="toggleAnswerKeyModal()" class="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Scroll Area -->
+            <div class="p-6 overflow-y-auto space-y-4 flex-1" id="answerKeyList">
+                <!-- Answer key list items populated by JS -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-700 bg-slate-900 flex justify-end">
+                <button onclick="toggleAnswerKeyModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium rounded-xl text-xs transition-colors">
+                    Close Window
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // QUESTION BANK DATA STRUCTURE (Exact Verbatim Items 1 - 60)
+        // -------------------------------------------------------------
+        const rawQuestionData = [
+            // PART 1: MCQ (1-50)
+            {
+                id: 1,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - What is Controlling?',
+                question: 'Controlling is the management function of monitoring performance, comparing it with planned standards, and taking ___ so the organization achieves its goals.',
+                options: ['corrective action', 'preventive action', 'strategic action', 'disciplinary action'],
+                correct: 'corrective action'
+            },
+            {
+                id: 2,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Characteristics of Control (03)',
+                question: 'Under Characteristics of Control, "Applies at every level" describes which characteristic?',
+                options: ['Pervasive', 'Continuous', 'Dynamic', 'Goal-oriented'],
+                correct: 'Pervasive'
+            },
+            {
+                id: 3,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Steps in the Control Process (Step 4)',
+                question: 'Which step in the Control Process involves: "Decide if the gap matters and what caused it"?',
+                options: ['Analyze deviations', 'Compare with standards', 'Measure performance', 'Take corrective action'],
+                correct: 'Analyze deviations'
+            },
+            {
+                id: 4,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Approaches (Ouchi)',
+                question: 'In Ouchi\'s approaches to organizational control, which approach relies on "shared values and culture"?',
+                options: ['Clan', 'Market', 'Bureaucratic', 'Operational'],
+                correct: 'Clan'
+            },
+            {
+                id: 5,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Types of Control (Feedforward)',
+                question: 'Which type of control happens BEFORE the work and "Prevents problems by controlling inputs"?',
+                options: ['Feedforward', 'Concurrent', 'Feedback', 'Post-action'],
+                correct: 'Feedforward'
+            },
+            {
+                id: 6,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Components of a Control System (2)',
+                question: 'Which component of a Control System "Compares actual performance with the standard and judges the gap"?',
+                options: ['Assessor / Selector', 'Detector / Sensor', 'Effector / Corrector', 'Communication network'],
+                correct: 'Assessor / Selector'
+            },
+            {
+                id: 7,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Identifying Control Problems',
+                question: 'Under Identifying Control Problems, "Work does not meet engineering specifications" defines which control problem?',
+                options: ['Quality Issues', 'Technical Errors', 'Safety Violations', 'Cost Overruns'],
+                correct: 'Quality Issues'
+            },
+            {
+                id: 8,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Root Cause Analysis Methods',
+                question: 'Which Root Cause Analysis method uses the "80/20 principle to identify the most significant causes"?',
+                options: ['Pareto Analysis', '5 Whys Analysis', 'Fault Tree Analysis (FTA)', 'Fishbone Diagram (Ishikawa)'],
+                correct: 'Pareto Analysis'
+            },
+            {
+                id: 9,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Traditional: Financial Controls (8)',
+                question: 'Which traditional financial control "Finds the point where total revenue equals total expenses"?',
+                options: ['Break-Even Analysis', 'Ratio Analysis', 'Budgetary Control', 'Auditing'],
+                correct: 'Break-Even Analysis'
+            },
+            {
+                id: 10,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Goals and Scheduling (3)',
+                question: 'Which modern technique "Estimates project duration when activity times are uncertain"?',
+                options: ['Program Evaluation and Review Technique (PERT)', 'Critical Path Method (CPM)', 'Earned Value Management (EVM)', 'Management by Objectives (MBO)'],
+                correct: 'Program Evaluation and Review Technique (PERT)'
+            },
+            {
+                id: 11,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Goals and Scheduling (4)',
+                question: 'Which modern technique "Measures performance by integrating scope, schedule, and cost"?',
+                options: ['Earned Value Management (EVM)', 'Balanced Scorecard', 'Six Sigma', 'Life-Cycle Costing'],
+                correct: 'Earned Value Management (EVM)'
+            },
+            {
+                id: 12,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Quality and Performance (8)',
+                question: 'Which modern technique "Evaluates performance from four views: financial, customer, internal processes, learning and growth"?',
+                options: ['Balanced Scorecard', 'Total Quality Management (TQM)', 'Benchmarking', 'Management Information System (MIS)'],
+                correct: 'Balanced Scorecard'
+            },
+            {
+                id: 13,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Information and Monitoring (11)',
+                question: 'Which modern technique "Monitors and controls industrial processes and electrical equipment remotely"?',
+                options: ['Supervisory Control and Data Acquisition (SCADA)', 'Internet of Things (IoT) Monitoring', 'Enterprise Resource Planning (ERP)', 'Management Information System (MIS)'],
+                correct: 'Supervisory Control and Data Acquisition (SCADA)'
+            },
+            {
+                id: 14,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Budgeting and Risk (13)',
+                question: 'Which modern technique "Requires every budget expense to be justified from scratch"?',
+                options: ['Zero-Based Budgeting', 'Responsibility Accounting', 'Life-Cycle Costing', 'Risk-Based Control'],
+                correct: 'Zero-Based Budgeting'
+            },
+            {
+                id: 15,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - What is an Operation?',
+                question: 'An ___ is an activity or process that transforms inputs into outputs.',
+                options: ['operation', 'organization', 'audit', 'appraisal'],
+                correct: 'operation'
+            },
+            {
+                id: 16,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - What is a Supply Chain?',
+                question: 'A ___ is a network of organizations and activities involved in producing and delivering a product.',
+                options: ['supply chain', 'productive system', 'control system', 'communication network'],
+                correct: 'supply chain'
+            },
+            {
+                id: 17,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Common Types of Transformation',
+                question: 'Under Common Types of Transformation, which type "Transfers ownership"?',
+                options: ['Exchange', 'Locational', 'Storage', 'Informational'],
+                correct: 'Exchange'
+            },
+            {
+                id: 18,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Manufacturing Processes',
+                question: 'Under Manufacturing Processes, "Customized products built to individual customer requirements" describes:',
+                options: ['Job Production', 'Batch Production', 'Mass Production', 'Continuous Production'],
+                correct: 'Job Production'
+            },
+            {
+                id: 19,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Service Processes',
+                question: 'Under Service Processes, "Services that shape knowledge, thoughts, or experiences" describes:',
+                options: ['Mental-Stimulus Processing', 'Information Processing', 'People Processing', 'Possession Processing'],
+                correct: 'Mental-Stimulus Processing'
+            },
+            {
+                id: 20,
+                type: 'mcq',
+                module: 'Module 6',
+                ref: 'Module 6 - Important Parts of Productive Systems',
+                question: 'Under Important Parts of Productive Systems, "An organized combination of resources, processes, and activities used to create goods or deliver services" defines:',
+                options: ['Productive Systems', 'Process Management', 'Operations Management', 'Strategic Control Systems'],
+                correct: 'Productive Systems'
+            },
+            {
+                id: 21,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Organizing Technical Activities',
+                question: 'Good organization turns individual technical efforts into ___.',
+                options: ['coordinated project work', 'formal organizational goals', 'defined reporting relationships', 'specialized engineering tasks'],
+                correct: 'coordinated project work'
+            },
+            {
+                id: 22,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Organizational Chart',
+                question: 'Which visual representation shows hierarchy, roles and responsibilities, reporting relationships, and communication channels?',
+                options: ['Organizational Chart', 'Fault Tree Diagram', 'Fishbone Diagram', 'Circle Diagram'],
+                correct: 'Organizational Chart'
+            },
+            {
+                id: 23,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Formal Organization',
+                question: '___: An officially established structure within an organization.',
+                options: ['Formal Organization', 'Informal Groups', 'Matrix Organization', 'Functional Structure'],
+                correct: 'Formal Organization'
+            },
+            {
+                id: 24,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Informal Groups',
+                question: '___: Groups that naturally form among employees. They are not officially created by management.',
+                options: ['Informal Groups', 'Committees', 'Project Teams', 'Functional Departments'],
+                correct: 'Informal Groups'
+            },
+            {
+                id: 25,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Types of Organizational Structures',
+                question: 'In which organizational structure are employees grouped according to their specialization or function?',
+                options: ['Functional Organizational Structure', 'Divisional Organizational Structure', 'Matrix Organizational Structure', 'Project-Based Organizational Structure'],
+                correct: 'Functional Organizational Structure'
+            },
+            {
+                id: 26,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Types of Organizational Structures (Matrix)',
+                question: 'In which organizational structure may employees report to two managers (Functional Manager and Project Manager)?',
+                options: ['Matrix Organizational Structure', 'Functional Organizational Structure', 'Divisional Organizational Structure', 'Project-Based Organizational Structure'],
+                correct: 'Matrix Organizational Structure'
+            },
+            {
+                id: 27,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Authority',
+                question: '___ is the right or power to give instructions, make decisions, and direct the work of others.',
+                options: ['Authority', 'Staffing', 'Controlling', 'Leadership'],
+                correct: 'Authority'
+            },
+            {
+                id: 28,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Types of Authority (Staff Authority)',
+                question: 'Which type of authority "Provides advice, support, and specialized knowledge. Usually does not directly command line employees"?',
+                options: ['Staff Authority', 'Line Authority', 'Functional Authority', 'Formal Authority'],
+                correct: 'Staff Authority'
+            },
+            {
+                id: 29,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - What is a Committee?',
+                question: 'A ___ is a group of people who work together to discuss issues, make decisions, solve problems, or provide recommendations.',
+                options: ['committee', 'supply chain', 'matrix team', 'vestibule school'],
+                correct: 'committee'
+            },
+            {
+                id: 30,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - What is Staffing?',
+                question: '___ is the management function concerned with determining human-resource needs and obtaining, selecting, developing, and assigning people to organizational positions.',
+                options: ['Staffing', 'Organizing', 'Recruiting', 'Orientation'],
+                correct: 'Staffing'
+            },
+            {
+                id: 31,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - What is Recruitment?',
+                question: '___ is the process of attracting qualified individuals to apply for available positions.',
+                options: ['Recruitment', 'Selection', 'Induction', 'Orientation'],
+                correct: 'Recruitment'
+            },
+            {
+                id: 32,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Selection',
+                question: '___ is the process of choosing from available applicants the individuals most likely to succeed in a position.',
+                options: ['Selection', 'Recruitment', 'Human Resource Planning', 'Performance Appraisal'],
+                correct: 'Selection'
+            },
+            {
+                id: 33,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Psychological Tests (Aptitude)',
+                question: 'Which psychological test "Measures a candidate\'s capacity or potential ability to learn new skills"?',
+                options: ['Aptitude Tests', 'Performance Tests', 'Personality Tests', 'Interest Tests'],
+                correct: 'Aptitude Tests'
+            },
+            {
+                id: 34,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Psychological Tests (Performance)',
+                question: 'Which psychological test "Measures a candidate\'s current, existing knowledge of a subject"?',
+                options: ['Performance Tests', 'Aptitude Tests', 'Personality Tests', 'Interest Tests'],
+                correct: 'Performance Tests'
+            },
+            {
+                id: 35,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Integration (Induction)',
+                question: 'Under Integration, which step has the goal of "Administrative alignment and macro-understanding" covering company-wide history, products, services, and structural hierarchy?',
+                options: ['Induction', 'Orientation', 'Vestibule School', 'Apprenticeship'],
+                correct: 'Induction'
+            },
+            {
+                id: 36,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Training & Development (Vestibule)',
+                question: 'Which training method for non-managers is a "Simulated workplace matching exact machines and time constraints"?',
+                options: ['Vestibule School', 'On-the-job (OJT)', 'Apprenticeship', 'Special Courses'],
+                correct: 'Vestibule School'
+            },
+            {
+                id: 37,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Training & Development (Managers)',
+                question: 'Under Training & Development for Managers, "In-basket exercises (simulation of notes/calls), management games, and case studies" develop which area?',
+                options: ['Decision Making', 'Interpersonal Competence', 'Job/Organizational Knowledge', 'Administrative Alignment'],
+                correct: 'Decision Making'
+            },
+            {
+                id: 38,
+                type: 'mcq',
+                module: 'Module 4',
+                ref: 'Module 4 - Employment Decisions (Transfer)',
+                question: 'Under Employment Decisions, what is a "Lateral movement to a similar level of responsibility"?',
+                options: ['Transfer', 'Promotion', 'Demotion', 'Separation'],
+                correct: 'Transfer'
+            },
+            {
+                id: 39,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - What is Communication?',
+                question: '___ is the exchange of information, ideas, feelings, and meaning between individuals.',
+                options: ['Communication', 'Leadership', 'Coordination', 'Motivation'],
+                correct: 'Communication'
+            },
+            {
+                id: 40,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - The Communication Process',
+                question: 'In the Communication Process, "The receiver decodes the message and sends ___ — completing the communication loop."',
+                options: ['feedback', 'symbols', 'directives', 'noise'],
+                correct: 'feedback'
+            },
+            {
+                id: 41,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Functions of Communication (Informing)',
+                question: 'Which function of communication involves "sharing facts, updates, and knowledge to keep everyone on the same page"?',
+                options: ['Informing', 'Coordinating', 'Expressing Feelings', 'Influencing & Motivating'],
+                correct: 'Informing'
+            },
+            {
+                id: 42,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Forms of Communication (Nonverbal)',
+                question: 'Which form of communication includes "Body language, gestures, facial expressions — often louder than words!"?',
+                options: ['Nonverbal', 'Verbal', 'Written & Digital', 'Lateral'],
+                correct: 'Nonverbal'
+            },
+            {
+                id: 43,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Organization Communication Flow (Lateral)',
+                question: 'In Organization Communication Flow, when "Peers and teams share info across departments — boosting coordination and breaking down silos fast," this is:',
+                options: ['Lateral', 'Down', 'Up', 'Network'],
+                correct: 'Lateral'
+            },
+            {
+                id: 44,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Influence & Bases of Power (Referent)',
+                question: 'Which base of power is described as: "When people admire and trust you so much they naturally follow your lead — the most lasting influence!"?',
+                options: ['Referent Power', 'Expert Power', 'Legitimate Power', 'Reward Power'],
+                correct: 'Referent Power'
+            },
+            {
+                id: 45,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Behavioral Approaches',
+                question: 'Leaders who "prioritize trust, morale, and team well-being — think of a mentor who listens and genuinely cares" exhibit which style?',
+                options: ['Relationship-Oriented', 'Task-Oriented', 'Autocratic', 'Directive'],
+                correct: 'Relationship-Oriented'
+            },
+            {
+                id: 46,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Fiedler\'s Contingency Model',
+                question: 'In Fiedler\'s Contingency Model, situational favorableness is shaped by leader-member relations, task structure, and ___:',
+                options: ['position power', 'follower readiness', 'time pressure', 'team acceptance'],
+                correct: 'position power'
+            },
+            {
+                id: 47,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Situational Leadership (Hersey & Blanchard)',
+                question: 'In Hersey & Blanchard\'s Situational Leadership, which style matches followers with "some skill, low confidence"?',
+                options: ['Coaching', 'Directing', 'Supporting', 'Delegating'],
+                correct: 'Coaching'
+            },
+            {
+                id: 48,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Path-Goal Model',
+                question: 'In the Path-Goal Model, which leaders "set high goals and challenge followers to reach their full potential"?',
+                options: ['Achievement-oriented leaders', 'Directive leaders', 'Supportive leaders', 'Participative leaders'],
+                correct: 'Achievement-oriented leaders'
+            },
+            {
+                id: 49,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Vroom\'s Decision-Making Model',
+                question: 'In Vroom\'s Decision-Making Model, which style is described as: "leader gathers team input then decides — balances speed and buy-in"?',
+                options: ['Consultative style', 'Autocratic style', 'Group style', 'Delegating style'],
+                correct: 'Consultative style'
+            },
+            {
+                id: 50,
+                type: 'mcq',
+                module: 'Module 5',
+                ref: 'Module 5 - Key Takeaways',
+                question: 'According to the Key Takeaways of Module 5, "great ___ is the foundation of every great leader."',
+                options: ['communication', 'authority', 'delegation', 'supervision'],
+                correct: 'communication'
+            },
+
+            // PART 2: IDENTIFICATION (51-60)
+            {
+                id: 51,
+                type: 'identification',
+                module: 'Module 6',
+                ref: 'Module 6 - Strategic Control Systems',
+                question: 'Identified definition: "A management process used to monitor, evaluate, and regulate project activities."',
+                accepted: ['Strategic Control Systems', 'Strategic Control System'],
+                displayAnswer: 'Strategic Control Systems'
+            },
+            {
+                id: 52,
+                type: 'identification',
+                module: 'Module 6',
+                ref: 'Module 6 - Root Cause Analysis Methods',
+                question: 'Which Root Cause Analysis method repeatedly asks "Why?" to identify the underlying cause of a problem?',
+                accepted: ['5 Whys Analysis', '5 Whys', 'Five Whys Analysis', 'Five Whys'],
+                displayAnswer: '5 Whys Analysis'
+            },
+            {
+                id: 53,
+                type: 'identification',
+                module: 'Module 6',
+                ref: 'Module 6 - Modern: Quality and Performance (6)',
+                question: 'Which modern technique uses data to reduce defects and improve process quality?',
+                accepted: ['Six Sigma'],
+                displayAnswer: 'Six Sigma'
+            },
+            {
+                id: 54,
+                type: 'identification',
+                module: 'Module 6',
+                ref: 'Module 6 - What Is Process Management?',
+                question: 'Identified definition: "A systematic approach to designing, monitoring, controlling, and improving activities that turn inputs into outputs."',
+                accepted: ['Process Management'],
+                displayAnswer: 'Process Management'
+            },
+            {
+                id: 55,
+                type: 'identification',
+                module: 'Module 4',
+                ref: 'Module 4 - Types of Authority',
+                question: 'Identified authority type: "Gives a specialist authority over a specific function or area. Authority is limited to the person\'s area of expertise."',
+                accepted: ['Functional Authority'],
+                displayAnswer: 'Functional Authority'
+            },
+            {
+                id: 56,
+                type: 'identification',
+                module: 'Module 4',
+                ref: 'Module 4 - Human Resource Planning',
+                question: 'Identified process: "The process of determining the organization\'s future workforce requirements and preparing to meet those requirements."',
+                accepted: ['Human Resource Planning', 'HRP'],
+                displayAnswer: 'Human Resource Planning (HRP)'
+            },
+            {
+                id: 57,
+                type: 'identification',
+                module: 'Module 4',
+                ref: 'Module 4 - Performance Appraisal',
+                question: 'Identified definition: "The systematic measurement of employee output."',
+                accepted: ['Performance Appraisal'],
+                displayAnswer: 'Performance Appraisal'
+            },
+            {
+                id: 58,
+                type: 'identification',
+                module: 'Module 4',
+                ref: 'Module 4 - Separations',
+                question: 'Identified staffing step: "The final step in the staffing process, marking the voluntary or involuntary end of employment."',
+                accepted: ['Separation', 'Separations'],
+                displayAnswer: 'Separation'
+            },
+            {
+                id: 59,
+                type: 'identification',
+                module: 'Module 5',
+                ref: 'Module 5 - Influence & Bases of Power',
+                question: 'Identified power description: "Using consequences to enforce compliance vs. earning respect through deep knowledge and expertise."',
+                accepted: ['Coercive & Expert Power', 'Coercive and Expert Power'],
+                displayAnswer: 'Coercive & Expert Power'
+            },
+            {
+                id: 60,
+                type: 'identification',
+                module: 'Module 5',
+                ref: 'Module 5 - Vroom\'s Decision-Making Model',
+                question: 'In Vroom\'s Decision-Making Model, identified style: "the style where the leader decides alone using available info — fast but limited input."',
+                accepted: ['Autocratic style', 'Autocratic'],
+                displayAnswer: 'Autocratic style'
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // APPLICATION STATE
+        // -------------------------------------------------------------
+        let userAnswers = {}; // { questionId: string }
+        let isSubmitted = false;
+        let activeMode = 'practice'; // 'practice' or 'exam'
+        let currentModFilter = 'all';
+        let currentTypeFilter = 'all';
+
+        // Timer State
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isTimerRunning = false;
+
+        // -------------------------------------------------------------
+        // INITIALIZATION
+        // -------------------------------------------------------------
+        window.onload = function () {
+            startTimer();
+            renderQuestionGrid();
+            renderQuestions();
+            populateAnswerKeyModal();
+            updateProgress();
+        };
+
+        // -------------------------------------------------------------
+        // TIMER LOGIC
+        // -------------------------------------------------------------
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timerToggleBtn');
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            } else {
+                startTimer();
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            }
+        }
+
+        // -------------------------------------------------------------
+        // MODE & FILTERS
+        // -------------------------------------------------------------
+        function setMode(mode) {
+            activeMode = mode;
+            const pracBtn = document.getElementById('modePracticeBtn');
+            const examBtn = document.getElementById('modeExamBtn');
+            const bannerTitle = document.getElementById('modeBannerTitle');
+            const bannerDesc = document.getElementById('modeBannerDesc');
+
+            if (mode === 'practice') {
+                pracBtn.className = 'px-2.5 py-1.5 rounded-md text-white bg-sky-600 shadow transition-all';
+                examBtn.className = 'px-2.5 py-1.5 rounded-md text-slate-400 hover:text-white transition-all';
+                bannerTitle.textContent = 'Practice Mode Active';
+                bannerDesc.textContent = 'Instant answer checking and exact module references will be displayed as soon as you select an answer.';
+            } else {
+                examBtn.className = 'px-2.5 py-1.5 rounded-md text-white bg-sky-600 shadow transition-all';
+                pracBtn.className = 'px-2.5 py-1.5 rounded-md text-slate-400 hover:text-white transition-all';
+                bannerTitle.textContent = 'Exam Mode Active';
+                bannerDesc.textContent = 'Immediate feedback is hidden. Complete all 60 items and click "Submit & Grade Quiz" to view your results.';
+            }
+            renderQuestions();
+        }
+
+        function filterModule(mod) {
+            currentModFilter = mod;
+            document.querySelectorAll('.mod-filter-btn').forEach(btn => {
+                if (btn.dataset.mod === mod) {
+                    btn.className = 'mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-sky-600 text-white shadow';
+                } else {
+                    btn.className = 'mod-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-700 text-slate-300 hover:bg-slate-600';
+                }
+            });
+            renderQuestions();
+        }
+
+        function filterType(type) {
+            currentTypeFilter = type;
+            document.querySelectorAll('.type-filter-btn').forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.className = 'type-filter-btn py-1 px-2 rounded-lg text-xs text-center font-medium bg-sky-600 text-white shadow';
+                } else {
+                    btn.className = 'type-filter-btn py-1 px-2 rounded-lg text-xs text-center font-medium bg-slate-700 text-slate-300 hover:bg-slate-600';
+                }
+            });
+            renderQuestions();
+        }
+
+        // -------------------------------------------------------------
+        // RENDER QUESTION GRID NAVIGATOR
+        // -------------------------------------------------------------
+        function renderQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+            rawQuestionData.forEach(q => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${q.id}`;
+                btn.onclick = () => scrollToQuestion(q.id);
+                btn.className = getGridBtnClass(q.id);
+                btn.textContent = q.id;
+                grid.appendChild(btn);
+            });
+        }
+
+        function getGridBtnClass(qId) {
+            const hasAns = userAnswers[qId] !== undefined && userAnswers[qId] !== '';
+            let base = 'w-full aspect-square rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center ';
+            
+            if (isSubmitted || activeMode === 'practice') {
+                if (hasAns) {
+                    const isCorr = checkIsCorrect(rawQuestionData.find(item => item.id === qId), userAnswers[qId]);
+                    if (isCorr) return base + 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/50';
+                    return base + 'bg-rose-600/30 text-rose-300 border border-rose-500/50';
+                }
+            }
+
+            if (hasAns) {
+                return base + 'bg-sky-600 text-white border border-sky-400';
+            }
+            return base + 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700';
+        }
+
+        function updateGridBtn(qId) {
+            const btn = document.getElementById(`grid-btn-${qId}`);
+            if (btn) {
+                btn.className = getGridBtnClass(qId);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // RENDER QUESTIONS CARDS
+        // -------------------------------------------------------------
+        function renderQuestions() {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = '';
+
+            const filtered = rawQuestionData.filter(q => {
+                const matchMod = currentModFilter === 'all' || q.module === currentModFilter;
+                const matchType = currentTypeFilter === 'all' || q.type === currentTypeFilter;
+                return matchMod && matchType;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-slate-800 rounded-2xl p-8 text-center text-slate-400 border border-slate-700">
+                        <i class="fa-solid fa-filter-circle-xmark text-3xl mb-2 text-slate-500"></i>
+                        <p class="text-sm">No questions match the selected filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(q => {
+                const card = document.createElement('div');
+                card.id = `q-card-${q.id}`;
+                card.className = 'bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4 transition-all duration-200';
+
+                // Module tag styling
+                let modBadgeColor = 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+                if (q.module === 'Module 5') modBadgeColor = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+                if (q.module === 'Module 6') modBadgeColor = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+
+                const userAnswer = userAnswers[q.id] || '';
+                const showFeedback = isSubmitted || (activeMode === 'practice' && userAnswer !== '');
+                const isCorrect = showFeedback ? checkIsCorrect(q, userAnswer) : false;
+
+                // Card Header
+                let html = `
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-slate-700 text-sky-400 font-mono">Item #${q.id}</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold border ${modBadgeColor}">${q.module}</span>
+                            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-900/60 text-slate-400 uppercase tracking-wider">${q.type}</span>
+                        </div>
+                        <span class="text-[11px] text-slate-400 font-medium">${q.ref}</span>
+                    </div>
+
+                    <div class="text-slate-100 text-sm sm:text-base font-medium leading-relaxed pt-1">
+                        ${q.question}
+                    </div>
+                `;
+
+                // Render Input / Options according to type
+                if (q.type === 'mcq') {
+                    html += `<div class="grid grid-cols-1 gap-2.5 pt-2">`;
+                    const optionLabels = ['A', 'B', 'C', 'D'];
+
+                    q.options.forEach((opt, idx) => {
+                        const isSelected = userAnswer === opt;
+                        let optStyle = 'bg-slate-900/40 border-slate-700 text-slate-200 hover:bg-slate-700/50';
+
+                        if (showFeedback) {
+                            if (opt === q.correct) {
+                                optStyle = 'bg-emerald-950/60 border-emerald-500 text-emerald-200 font-medium ring-1 ring-emerald-500';
+                            } else if (isSelected && opt !== q.correct) {
+                                optStyle = 'bg-rose-950/60 border-rose-500 text-rose-200 ring-1 ring-rose-500';
+                            }
+                        } else if (isSelected) {
+                            optStyle = 'bg-sky-950/70 border-sky-500 text-sky-200 font-medium ring-1 ring-sky-500';
+                        }
+
+                        html += `
+                            <button onclick="selectMcqAnswer(${q.id}, '${escapeQuote(opt)}')" 
+                                class="w-full text-left p-3 sm:p-3.5 rounded-xl border ${optStyle} transition-all flex items-start space-x-3 text-xs sm:text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">${optionLabels[idx]}</span>
+                                <span class="flex-1 mt-0.5 leading-snug">${opt}</span>
+                                ${showFeedback && opt === q.correct ? '<i class="fa-solid fa-circle-check text-emerald-400 text-base ml-2"></i>' : ''}
+                                ${showFeedback && isSelected && opt !== q.correct ? '<i class="fa-solid fa-circle-xmark text-rose-400 text-base ml-2"></i>' : ''}
+                            </button>
+                        `;
+                    });
+                    html += `</div>`;
+                } else {
+                    // Identification Input field
+                    let inputBorder = 'border-slate-700 bg-slate-900/80 text-white focus:border-sky-500';
+                    if (showFeedback) {
+                        inputBorder = isCorrect ? 'border-emerald-500 bg-emerald-950/30 text-emerald-200' : 'border-rose-500 bg-rose-950/30 text-rose-200';
+                    }
+
+                    html += `
+                        <div class="pt-2 space-y-2">
+                            <label class="block text-xs font-semibold text-slate-400">Type exact term / answer:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="ident-input-${q.id}" value="${escapeQuote(userAnswer)}" 
+                                    oninput="saveIdentAnswer(${q.id}, this.value)"
+                                    placeholder="Enter verbatim answer..."
+                                    class="w-full px-4 py-2.5 rounded-xl border ${inputBorder} text-sm focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors">
+                                ${userAnswer ? `<button onclick="clearAnswer(${q.id})" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl text-xs font-medium">Clear</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Answer Feedback Banner (In practice mode or post-submission)
+                if (showFeedback) {
+                    const fbColor = isCorrect ? 'bg-emerald-900/20 border-emerald-500/40 text-emerald-300' : 'bg-rose-900/20 border-rose-500/40 text-rose-300';
+                    const icon = isCorrect ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-circle-xmark text-rose-400';
+                    const correctDisplay = q.type === 'mcq' ? q.correct : q.displayAnswer;
+
+                    html += `
+                        <div class="mt-4 p-3.5 rounded-xl border ${fbColor} text-xs space-y-1.5 animate-fadeIn">
+                            <div class="flex items-center space-x-2 font-semibold">
+                                <i class="${icon} text-sm"></i>
+                                <span>${isCorrect ? 'Correct!' : 'Incorrect'}</span>
+                            </div>
+                            <p class="text-slate-300"><strong class="text-slate-200">Verbatim Correct Answer:</strong> <span class="font-semibold text-amber-300">${correctDisplay}</span></p>
+                            <p class="text-slate-400 text-[11px]"><strong class="text-slate-300">Reference:</strong> ${q.ref}</p>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        // Helper string escaping
+        function escapeQuote(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        // -------------------------------------------------------------
+        // ANSWER SELECTION HANDLERS
+        // -------------------------------------------------------------
+        function selectMcqAnswer(qId, option) {
+            userAnswers[qId] = option;
+            updateProgress();
+            updateGridBtn(qId);
+            renderQuestions();
+        }
+
+        function saveIdentAnswer(qId, val) {
+            userAnswers[qId] = val;
+            updateProgress();
+            updateGridBtn(qId);
+        }
+
+        function clearAnswer(qId) {
+            delete userAnswers[qId];
+            updateProgress();
+            updateGridBtn(qId);
+            renderQuestions();
+        }
+
+        // -------------------------------------------------------------
+        // VERIFICATION & GRADING LOGIC
+        // -------------------------------------------------------------
+        function checkIsCorrect(q, userVal) {
+            if (!userVal) return false;
+            const normUser = userVal.trim().toLowerCase();
+
+            if (q.type === 'mcq') {
+                return normUser === q.correct.trim().toLowerCase();
+            } else {
+                return q.accepted.some(acc => acc.trim().toLowerCase() === normUser);
+            }
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).filter(k => userAnswers[k] && userAnswers[k].trim() !== '').length;
+            document.getElementById('answeredCount').textContent = `${answeredCount} / 60`;
+            document.getElementById('bottomAnsweredVal').textContent = answeredCount;
+
+            const pct = (answeredCount / 60) * 100;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        // -------------------------------------------------------------
+        // SUBMIT & SCORE COMPUTATION
+        // -------------------------------------------------------------
+        function submitQuiz() {
+            isSubmitted = true;
+            let totalCorrect = 0;
+            let mcqCorrect = 0;
+            let identCorrect = 0;
+
+            let mod4Correct = 0, mod4Total = 20;
+            let mod5Correct = 0, mod5Total = 14;
+            let mod6Correct = 0, mod6Total = 26;
+
+            rawQuestionData.forEach(q => {
+                const uAns = userAnswers[q.id];
+                const corr = checkIsCorrect(q, uAns);
+
+                if (corr) {
+                    totalCorrect++;
+                    if (q.type === 'mcq') mcqCorrect++;
+                    if (q.type === 'identification') identCorrect++;
+
+                    if (q.module === 'Module 4') mod4Correct++;
+                    if (q.module === 'Module 5') mod5Correct++;
+                    if (q.module === 'Module 6') mod6Correct++;
+                }
+            });
+
+            // Update UI Scoreboard
+            document.getElementById('finalScoreVal').textContent = totalCorrect;
+            const totalPct = Math.round((totalCorrect / 60) * 100);
+            document.getElementById('scorePercentage').textContent = `(${totalPct}%)`;
+            document.getElementById('scorePreviewBox').classList.remove('hidden');
+
+            document.getElementById('statOverall').textContent = `${totalCorrect} / 60`;
+            document.getElementById('statOverallPct').textContent = `${totalPct}% Accuracy`;
+
+            document.getElementById('statMcq').textContent = `${mcqCorrect} / 50`;
+            document.getElementById('statMcqPct').textContent = `${Math.round((mcqCorrect / 50) * 100)}%`;
+
+            document.getElementById('statIdent').textContent = `${identCorrect} / 10`;
+            document.getElementById('statIdentPct').textContent = `${Math.round((identCorrect / 10) * 100)}%`;
+
+            // Timer display update
+            document.getElementById('statTime').textContent = document.getElementById('timerDisplay').textContent;
+
+            // Module breakdown bars
+            const m4Pct = Math.round((mod4Correct / mod4Total) * 100);
+            const m5Pct = Math.round((mod5Correct / mod5Total) * 100);
+            const m6Pct = Math.round((mod6Correct / mod6Total) * 100);
+
+            document.getElementById('mod4ScoreText').textContent = `${mod4Correct} / ${mod4Total} (${m4Pct}%)`;
+            document.getElementById('mod4Bar').style.width = `${m4Pct}%`;
+
+            document.getElementById('mod5ScoreText').textContent = `${mod5Correct} / ${mod5Total} (${m5Pct}%)`;
+            document.getElementById('mod5Bar').style.width = `${m5Pct}%`;
+
+            document.getElementById('mod6ScoreText').textContent = `${mod6Correct} / ${mod6Total} (${m6Pct}%)`;
+            document.getElementById('mod6Bar').style.width = `${m6Pct}%`;
+
+            // Show Results Dashboard & Render updated cards
+            document.getElementById('resultsDashboard').classList.remove('hidden');
+            renderQuestionGrid();
+            renderQuestions();
+
+            // Smooth Scroll to Results
+            document.getElementById('resultsDashboard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Reset Quiz
+        function resetQuizConfirm() {
+            if (confirm("Are you sure you want to reset all your answers and start over?")) {
+                userAnswers = {};
+                isSubmitted = false;
+                timerSeconds = 0;
+                document.getElementById('scorePreviewBox').classList.add('hidden');
+                document.getElementById('resultsDashboard').classList.add('hidden');
+                updateProgress();
+                renderQuestionGrid();
+                renderQuestions();
+                scrollToTop();
+            }
+        }
+
+        // -------------------------------------------------------------
+        // ANSWER KEY MODAL GENERATOR
+        // -------------------------------------------------------------
+        function populateAnswerKeyModal() {
+            const list = document.getElementById('answerKeyList');
+            list.innerHTML = '';
+
+            rawQuestionData.forEach(q => {
+                const ansText = q.type === 'mcq' ? q.correct : q.displayAnswer;
+                const item = document.createElement('div');
+                item.className = 'p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/70 text-xs space-y-1.5';
+                item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-sky-400 font-mono">Item #${q.id} (${q.module})</span>
+                        <span class="text-slate-400 text-[11px]">${q.ref}</span>
+                    </div>
+                    <p class="text-slate-200 font-medium">${q.question}</p>
+                    <p class="text-emerald-400 font-semibold"><i class="fa-solid fa-check mr-1"></i> Exact Answer: <span class="underline">${ansText}</span></p>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function toggleAnswerKeyModal() {
+            const modal = document.getElementById('answerKeyModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Navigation helpers
+        function scrollToQuestion(id) {
+            const el = document.getElementById(`q-card-${id}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // If filtered out, reset filters
+                filterModule('all');
+                filterType('all');
+                setTimeout(() => {
+                    const elRetry = document.getElementById(`q-card-${id}`);
+                    if (elRetry) elRetry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
